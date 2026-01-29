@@ -26,6 +26,18 @@ const Services = () => {
     }
   ];
 
+  const handleLinkClick = (e, href) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <section className="section" id="services">
       <div className="container">
@@ -34,7 +46,7 @@ const Services = () => {
           <h2 style={{ fontSize: '2.5rem' }}>Mobile solutions designed to scale fast</h2>
         </div>
 
-        <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+        <div className="services-grid grid-4">
           {services.map((service, index) => (
             <motion.div
               key={service.title}
@@ -43,21 +55,21 @@ const Services = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="service-card glass"
-              style={{ padding: '2.5rem', borderRadius: '1.5rem', border: '1px solid var(--card-border)' }}
+              style={{ padding: '2rem', borderRadius: '1.5rem', border: '1px solid var(--card-border)' }}
               whileHover={{ y: -10, borderColor: 'var(--accent-primary)' }}
             >
-              <div style={{ color: 'var(--accent-primary)', marginBottom: '1.5rem' }}>
+              <div style={{ color: 'var(--accent-primary)', marginBottom: '1rem' }}>
                 {service.icon}
               </div>
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{service.title}</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>{service.description}</p>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>{service.title}</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{service.description}</p>
             </motion.div>
           ))}
         </div>
 
-        <div style={{ marginTop: '4rem', textAlign: 'center', display: 'flex', gap: '1.5rem', justifyContent: 'center' }}>
-          <a href="#contact" className="btn btn-primary">Get a Quote</a>
-          <a href="#contact" className="btn btn-ghost">Book a Call</a>
+        <div style={{ marginTop: '4rem', textAlign: 'center', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a href="#contact" onClick={(e) => handleLinkClick(e, '#contact')} className="btn btn-primary">Get a Quote</a>
+          <a href="#contact" onClick={(e) => handleLinkClick(e, '#contact')} className="btn btn-ghost">Book a Call</a>
         </div>
       </div>
     </section>

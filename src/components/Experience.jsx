@@ -55,7 +55,7 @@ const Experience = () => {
             className="timeline-line"
             style={{ 
             position: 'absolute', 
-            left: '20px', 
+            left: '21px', 
             top: 0, 
             bottom: 0, 
             width: '2px', 
@@ -90,21 +90,22 @@ const Experience = () => {
                   }}
                 ></div>
 
-                <div className="glass" style={{ padding: '2rem', borderRadius: '1.25rem' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <div>
-                        <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{exp.role}</h3>
-                        <p style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>{exp.company}</p>
+                <div className="glass" style={{ padding: '1.5rem', borderRadius: '1.25rem' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+                      <div style={{ flex: '1 1 200px' }}>
+                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{exp.role}</h3>
+                        <p style={{ color: 'var(--accent-primary)', fontWeight: 600, fontSize: '0.9rem' }}>{exp.company}</p>
                       </div>
                       <span style={{ 
-                        fontSize: '0.85rem', 
-                        padding: '0.35rem 0.75rem', 
+                        fontSize: '0.75rem', 
+                        padding: '0.25rem 0.6rem', 
                         background: 'rgba(255,255,255,0.05)', 
                         borderRadius: '0.5rem',
-                        color: 'var(--text-secondary)'
+                        color: 'var(--text-secondary)',
+                        whiteSpace: 'nowrap'
                       }}>{exp.period}</span>
                    </div>
-                   <p style={{ color: 'var(--text-secondary)' }}>{exp.description}</p>
+                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{exp.description}</p>
                 </div>
               </motion.div>
             ))}

@@ -55,7 +55,7 @@ const FAQ = () => {
           <span className="eyebrow">Pricing</span>
           <h2 style={{ fontSize: '2.5rem' }}>Flexible packages for every stage</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+        <div className="grid-3">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}

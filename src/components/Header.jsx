@@ -14,6 +14,19 @@ const Header = ({ theme, toggleTheme }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLinkClick = (e, href) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
   const navLinks = [
     { name: 'About', href: '#about' },
     { name: 'Services', href: '#services' },
@@ -29,14 +42,26 @@ const Header = ({ theme, toggleTheme }) => {
       style={{ borderBottom: isScrolled ? '1px solid var(--card-border)' : 'none' }}
     >
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <a href="#hero" className="logo font-heading" style={{ fontSize: '1.5rem', fontWeight: 800 }}>
+        <a 
+          href="#hero" 
+          onClick={(e) => handleLinkClick(e, '#hero')}
+          className="logo font-heading" 
+          style={{ fontSize: '1.5rem', fontWeight: 800 }}
+        >
           Saifullah<span style={{ color: 'var(--accent-primary)' }}>Razzaq</span>
         </a>
 
         {/* Desktop Nav */}
-        <nav className="desktop-nav" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <nav className="desktop-nav flex items-center gap-8">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href} style={{ fontWeight: 500 }}>{link.name}</a>
+            <a 
+              key={link.name} 
+              href={link.href} 
+              onClick={(e) => handleLinkClick(e, link.href)}
+              style={{ fontWeight: 500 }}
+            >
+              {link.name}
+            </a>
           ))}
           <button 
             onClick={toggleTheme} 
@@ -83,7 +108,7 @@ const Header = ({ theme, toggleTheme }) => {
               <a 
                 key={link.name} 
                 href={link.href} 
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => handleLinkClick(e, link.href)}
                 style={{ fontSize: '1.25rem', fontWeight: 600 }}
               >
                 {link.name}
@@ -95,7 +120,7 @@ const Header = ({ theme, toggleTheme }) => {
                 setIsMobileMenuOpen(false);
               }} 
               className="btn btn-ghost"
-              style={{ width: '100%' }}
+              style={{ width: '100%', transition: 'all 0.2s ease' }}
             >
               {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </button>

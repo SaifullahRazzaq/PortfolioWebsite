@@ -25,7 +25,7 @@ const Testimonials = () => {
           <h2 style={{ fontSize: '2.5rem' }}>Trusted by teams that ship fast</h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        <div className="grid-3">
           {testimonials.map((t, index) => (
             <motion.div
               key={index}

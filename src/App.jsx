@@ -64,7 +64,9 @@ const Scene = ({ theme }) => {
 }
 
 function App() {
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('portfolio-theme') || 'dark';
+  })
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -73,12 +75,25 @@ function App() {
   })
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('portfolio-theme', theme);
   }, [theme])
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark')
   }
+
+  const handleLinkClick = (e, href) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - (window.innerWidth <= 768 ? 70 : 80),
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div className="app">
@@ -111,21 +126,21 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <span className="eyebrow" style={{ fontSize: '1.1rem' }}>Senior React Native Engineer</span>
-              <h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)', maxWidth: '1000px', lineHeight: 1, marginBottom: '2rem', letterSpacing: '-0.02em' }}>
+              <span className="eyebrow">Senior Software Engineer & AI Architect</span>
+              <h1 style={{ maxWidth: '1000px', marginBottom: '2rem', letterSpacing: '-0.02em' }}>
                 Building <span style={{ 
                   background: 'linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent'
-                }}>High-Performance</span> Mobile Products.
+                }}>Agentic AI</span> & Mobile Products.
               </h1>
-              <p style={{ fontSize: 'clamp(1rem, 3vw, 1.25rem)', color: 'var(--text-secondary)', maxWidth: '700px', marginBottom: '3.5rem', lineHeight: 1.6 }}>
-                Hi, I'm Saifullah Razzaq. With 6+ years of experience in React Native, TypeScript, and Node.js, 
-                I help teams ship polished mobile apps that grow retention and revenue.
+              <p style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', color: 'var(--text-secondary)', maxWidth: '700px', marginBottom: '3.5rem', lineHeight: 1.6 }}>
+                Hi, I'm Saifullah Razzaq. With 6+ years of experience in React Native and Agentic AI, 
+                I help teams ship intelligent systems and polished mobile apps that grow retention and revenue.
               </p>
-              <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                <a href="#contact" className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontSize: '1.125rem' }}>Hire Me</a>
-                <a href="#portfolio" className="btn btn-ghost" style={{ padding: '1rem 2.5rem', fontSize: '1.125rem' }}>View Portfolio</a>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <a href="#contact" onClick={(e) => handleLinkClick(e, '#contact')} className="btn btn-primary" style={{ padding: '0.875rem 2rem' }}>Hire Me</a>
+                <a href="#portfolio" onClick={(e) => handleLinkClick(e, '#portfolio')} className="btn btn-ghost" style={{ padding: '0.875rem 2rem' }}>View Portfolio</a>
               </div>
             </motion.div>
           </div>

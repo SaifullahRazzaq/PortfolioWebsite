@@ -7,6 +7,7 @@ const Portfolio = () => {
 
   const categories = [
     { label: 'All', value: 'all' },
+    { label: 'AI Agents', value: 'ai' },
     { label: 'Marketplace', value: 'marketplace' },
     { label: 'Services', value: 'services' },
     { label: 'Healthcare', value: 'healthcare' },
@@ -14,6 +15,36 @@ const Portfolio = () => {
   ];
 
   const projects = [
+    {
+      title: 'AI-Powered CRM Hub',
+      category: 'ai',
+      description: 'An advanced CRM system built with multi-agent orchestration for automated lead classification, sentiment analysis, and personalized outreach.',
+      tags: ['LangChain', 'OpenAI', 'React', 'Node.js'],
+      metrics: ['60% faster lead processing', '95% Accuracy'],
+      links: [
+        { label: 'View Demo', icon: <ExternalLink size={16} />, url: '#' }
+      ]
+    },
+    {
+      title: 'Autonomous Sales Agent',
+      category: 'ai',
+      description: 'An autonomous agent that manages full sales cycles, from prospecting to closing, using adaptive learning and real-time data extraction.',
+      tags: ['Python', 'AutoGPT', 'Vectors', 'PostgreSQL'],
+      metrics: ['3x ROI Improvement', 'Active 24/7'],
+      links: [
+        { label: 'Case Study', icon: <ExternalLink size={16} />, url: '#' }
+      ]
+    },
+    {
+      title: 'Voice Intelligence Suite',
+      category: 'ai',
+      description: 'Real-time voice processing agent for customer support, capable of high-fidelity speech-to-text and intent-driven action execution.',
+      tags: ['Whisper', 'TTS', 'HuggingFace', 'Redis'],
+      metrics: ['40% reduction in TTR', 'Natural flow'],
+      links: [
+        { label: 'Live Demo', icon: <ExternalLink size={16} />, url: '#' }
+      ]
+    },
     {
       title: 'Neighbors Trailer',
       category: 'marketplace',
@@ -136,11 +167,11 @@ const Portfolio = () => {
                   <h3 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{project.title}</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>{project.description}</p>
                   
-                  <div className="tags" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                  <div className="tags" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
                     {project.tags.map(tag => (
                       <span key={tag} style={{ 
-                        fontSize: '0.75rem', 
-                        padding: '0.25rem 0.75rem', 
+                        fontSize: '0.7rem', 
+                        padding: '0.2rem 0.6rem', 
                         background: 'rgba(56, 189, 248, 0.1)', 
                         color: 'var(--accent-primary)',
                         borderRadius: '99px',
@@ -149,15 +180,15 @@ const Portfolio = () => {
                     ))}
                   </div>
 
-                  <div className="metrics" style={{ display: 'flex', gap: '1rem', color: 'var(--accent-secondary)', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem' }}>
+                  <div className="metrics" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', color: 'var(--accent-secondary)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '1.5rem' }}>
                     {project.metrics.map(m => <span key={m}>{m}</span>)}
                   </div>
                 </div>
 
-                <div className="links" style={{ display: 'flex', gap: '1rem' }}>
+                <div className="links" style={{ display: 'grid', gridTemplateColumns: project.links.length > 1 ? '1fr 1fr' : '1fr', gap: '0.75rem' }}>
                    {project.links.map(link => (
-                      <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', flex: 1 }}>
-                        {link.icon} <span style={{ marginLeft: '0.5rem' }}>{link.label}</span>
+                      <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost" style={{ padding: '0.5rem', fontSize: '0.75rem' }}>
+                        {link.icon} <span style={{ marginLeft: '0.35rem' }}>{link.label}</span>
                       </a>
                    ))}
                 </div>

@@ -11,21 +11,21 @@ const Contact = () => {
           <h2 style={{ fontSize: '2.5rem' }}>Let's build something great together</h2>
         </div>
 
-        <div className="contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '4rem' }}>
+        <div className="contact-grid grid-2">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="contact-info"
           >
-            <div className="glass" style={{ padding: '3rem', borderRadius: '2rem', height: '100%' }}>
+            <div className="glass" style={{ padding: '2.5rem', borderRadius: '2rem', height: '100%' }}>
               <h3 style={{ fontSize: '1.75rem', marginBottom: '1.5rem' }}>Direct Contact</h3>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem' }}>
                 Ready to discuss your project? Send a quick message or connect
                 on your preferred platform.
               </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '3rem' }}>
                 <a 
                   href="https://wa.me/923422359217" 
                   target="_blank" 
@@ -50,7 +50,7 @@ const Contact = () => {
                   <a href="https://www.linkedin.com/in/saifullah-razzaq-7ab027139/" target="_blank" rel="noopener noreferrer" className="glass btn-icon" style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px' }}>
                     <Linkedin size={24} />
                   </a>
-                  <a href="#" target="_blank" rel="noopener noreferrer" className="glass btn-icon" style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px' }}>
+                  <a href="https://github.com/SaifullahRazzaq" target="_blank" rel="noopener noreferrer" className="glass btn-icon" style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px' }}>
                     <Github size={24} />
                   </a>
                 </div>
@@ -65,13 +65,13 @@ const Contact = () => {
           >
             <form 
               className="glass" 
-              style={{ padding: '3rem', borderRadius: '2rem' }}
+              style={{ padding: '2.5rem', borderRadius: '2rem' }}
               action="https://formsubmit.co/saifullah.razzaq1995@gmail.com"
               method="POST"
             >
               <h3 style={{ fontSize: '1.75rem', marginBottom: '2rem' }}>Send a message</h3>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div className="grid-2" style={{ marginBottom: '1.5rem', gap: '1rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <label style={{ fontSize: '0.9rem', fontWeight: 600 }}>Name</label>
                   <input type="text" name="name" required style={{ 
@@ -98,7 +98,7 @@ const Contact = () => {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem' }}>
                 <label style={{ fontSize: '0.9rem', fontWeight: 600 }}>Project Details</label>
-                <textarea name="message" rows="5" required style={{ 
+                <textarea name="message" rows="4" required style={{ 
                   padding: '1rem', 
                   background: 'rgba(255,255,255,0.05)', 
                   border: '1px solid var(--card-border)', 
@@ -109,7 +109,7 @@ const Contact = () => {
                 }}></textarea>
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '1.25rem' }}>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '1.1rem' }}>
                 Send Message
               </button>
               
@@ -120,11 +120,6 @@ const Contact = () => {
           </motion.div>
         </div>
       </div>
-      <style jsx>{`
-         @media (max-width: 992px) {
-           .contact-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
-         }
-      `}</style>
     </section>
   );
 };
