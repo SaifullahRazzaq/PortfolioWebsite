@@ -1,0 +1,7 @@
+# The previous static site, kept in the repo for reference only. It is not part
+# of the Next app and does not need uploading or deploying.
+legacy/
+
+# Agent tooling, not build input.
+AGENTS.md
+CLAUDE.md
