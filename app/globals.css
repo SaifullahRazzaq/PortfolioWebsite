@@ -1,0 +1,163 @@
+@import 'tailwindcss';
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Design tokens (Tailwind v4 CSS-first config).
+   The palette walks night → warm → dawn as the camera moves; `--journey-*`
+   below are the live values GSAP lerps, `--color-*` are the fixed stops.
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --color-void: #08090c;
+  --color-ink: #050609;
+  --color-slate-deep: #12141a;
+
+  --color-amber: #ff8a3d;
+  --color-ember: #ffb877;
+  --color-mint: #5ee7d0;
+  --color-iris: #6c8cff;
+
+  --color-bone: #edeae4;
+  --color-bone-dim: #a7a49f;
+  --color-bone-faint: #6b6863;
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Big type. Headings are meant to feel oversized, not "large-ish". */
+  --text-display: clamp(2.75rem, 9vw, 8.5rem);
+  --text-hero: clamp(3.5rem, 12vw, 12rem);
+  --text-section: clamp(2rem, 5.5vw, 4.5rem);
+
+  --tracking-label: 0.28em;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  /* Live, JS-driven palette. lib/palette.ts writes these as the journey moves. */
+  --journey-bg: #08090c;
+  --journey-accent: #ff8a3d;
+  --journey-cool: #5ee7d0;
+  --journey-text: #edeae4;
+
+  color-scheme: dark;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+
+html {
+  /* Lenis owns scrolling; native smooth-scroll would fight it. */
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--journey-bg);
+  color: var(--journey-text);
+  font-family: var(--font-body);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Lenis requirements — without these the wrapper clips the scroll range. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--journey-accent);
+  color: var(--color-ink);
+}
+
+/* Focus rings must survive on top of the canvas. */
+:focus-visible {
+  outline: 2px solid var(--journey-cool);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Utilities ────────────────────────────────────────────────────────────── */
+
+@utility label {
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-bone-dim);
+}
+
+/* Screen-reader-only, but focusable variants stay reachable. */
+@utility sr-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* A line travelling down its own track — the scroll affordance on the hero. */
+@keyframes scrollhint {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(250%);
+  }
+}
+
+/* Hide the native cursor only where the custom one is actually drawn, and never
+   over text fields, where the I-beam is real information. */
+@media (min-width: 768px) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  a,
+  button,
+  [data-cursor='hover'] {
+    cursor: none;
+  }
+  input,
+  textarea,
+  select {
+    cursor: auto;
+  }
+}
+
+/* ── Motion preference ────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Gallery HUD: each project's copy fades up as the camera reaches its screen. */
+@keyframes hudin {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
