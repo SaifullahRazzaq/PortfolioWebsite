@@ -17,14 +17,23 @@ import {
 import type { Project, TimelineEntry } from '@/data/types';
 
 /**
- * Layout is authored in these logical units; the backing canvas is `SCALE`×
- * bigger and the context is scaled to match. Same code, more pixels — the
- * screens are read at an angle from several metres away and 1024px across a
- * 4.2m panel left the body copy mushy.
+ * Layout is authored in these logical units. `pixelScale` multiplies the backing
+ * canvas; the context is scaled to match, so drawing code never changes.
+ *
+ * It defaults to 1, and that matters.
+ *
+ * It used to be a fixed 1.75, which put the nine screens and six cards at
+ * ~219MB of canvas backing store plus GPU mipmaps — allocated in a single tick.
+ * Browsers do not refuse that; under pressure they *discard* backing stores, and
+ * a discarded canvas renders as blocky garbage rather than as nothing. That was
+ * the corruption on the project screens.
+ *
+ * Sharpness never depended on it. The screens looked soft because mipmaps were
+ * off and DepthOfField was defocusing them; both are fixed, and at 1024px across
+ * a 3.5m panel with mipmapping and anisotropic filtering the type holds up.
  */
 const W = 1024;
 const H = 640;
-const SCALE = 1.75;
 
 const DISPLAY = '600 {size}px "Space Grotesk", ui-sans-serif, system-ui, sans-serif';
 const BODY = '400 {size}px Inter, ui-sans-serif, system-ui, sans-serif';
@@ -90,12 +99,13 @@ export function drawProjectScreen(
   project: Project,
   index: number,
   anisotropy = 1,
+  pixelScale = 1,
 ): CanvasTexture {
   const canvas = document.createElement('canvas');
-  canvas.width = W * SCALE;
-  canvas.height = H * SCALE;
+  canvas.width = Math.round(W * pixelScale);
+  canvas.height = Math.round(H * pixelScale);
   const ctx = canvas.getContext('2d')!;
-  ctx.scale(SCALE, SCALE);
+  ctx.scale(pixelScale, pixelScale);
 
   const accent = project.accent;
   const PAD = 64;
@@ -217,12 +227,13 @@ export function drawTimelineCard(
   entry: TimelineEntry,
   accent: string,
   anisotropy = 1,
+  pixelScale = 1,
 ): CanvasTexture {
   const canvas = document.createElement('canvas');
-  canvas.width = CARD_W * SCALE;
-  canvas.height = CARD_H * SCALE;
+  canvas.width = Math.round(CARD_W * pixelScale);
+  canvas.height = Math.round(CARD_H * pixelScale);
   const ctx = canvas.getContext('2d')!;
-  ctx.scale(SCALE, SCALE);
+  ctx.scale(pixelScale, pixelScale);
   const PAD = 48;
 
   const bg = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);

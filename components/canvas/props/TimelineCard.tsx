@@ -5,6 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import type { CanvasTexture, Group, MeshBasicMaterial } from 'three';
 import { damp, smoothstep } from '@/lib/curve';
 import { drawTimelineCard } from '@/lib/screenTexture';
+import { useQuality } from '../QualityContext';
 import type { TimelineEntry } from '@/data/types';
 
 /**
@@ -32,23 +33,30 @@ export function TimelineCard({ entry, index, restPosition, focusZ, accent }: Tim
   const material = useRef<MeshBasicMaterial>(null);
   const [texture, setTexture] = useState<CanvasTexture | null>(null);
   const maxAnisotropy = useThree((s) => s.gl.capabilities.getMaxAnisotropy());
+  const pixelScale = useQuality().tier === 'low' ? 0.7 : 1;
   const reveal = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
     let created: CanvasTexture | null = null;
 
+    // Staggered for the same reason as the gallery screens: no allocation spike.
+    let timer = 0;
     document.fonts.ready.then(() => {
       if (cancelled) return;
-      created = drawTimelineCard(entry, accent, maxAnisotropy);
-      setTexture(created);
+      timer = window.setTimeout(() => {
+        if (cancelled) return;
+        created = drawTimelineCard(entry, accent, maxAnisotropy, pixelScale);
+        setTexture(created);
+      }, 420 + index * 45);
     });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
       created?.dispose();
     };
-  }, [entry, accent, maxAnisotropy]);
+  }, [entry, accent, index, maxAnisotropy, pixelScale]);
 
   // Swapping in a map changes the shader defines; three needs telling.
   useEffect(() => {

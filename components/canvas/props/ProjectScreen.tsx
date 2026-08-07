@@ -5,6 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import type { CanvasTexture, Mesh, MeshBasicMaterial } from 'three';
 import { clamp01, damp, smoothstep } from '@/lib/curve';
 import { drawProjectScreen } from '@/lib/screenTexture';
+import { useQuality } from '../QualityContext';
 import type { Project } from '@/data/types';
 
 /**
@@ -41,27 +42,44 @@ export function ProjectScreen({
   // Max anisotropy keeps the panel sharp along its foreshortened axis; these
   // screens are almost never viewed square-on.
   const maxAnisotropy = useThree((s) => s.gl.capabilities.getMaxAnisotropy());
+  // Weaker devices draw the panels smaller. They are also the devices most
+  // likely to have their canvas backing stores reclaimed.
+  const pixelScale = useQuality().tier === 'low' ? 0.7 : 1;
   const [hovered, setHovered] = useState(false);
   const power = useRef(0);
   const hoverAmount = useRef(0);
 
-  // Draw after fonts are ready, or the texture bakes in a fallback typeface.
+  /**
+   * Draw after fonts are ready, or the texture bakes in a fallback typeface.
+   *
+   * Staggered by index. All nine screens becoming ready in the same tick means
+   * nine multi-megabyte canvases allocated back to back, and a spike like that
+   * is what pushes a browser into discarding backing stores — which is how the
+   * screens ended up rendering as corrupted blocks. Spreading the work over a
+   * few hundred milliseconds costs nothing here, because it happens behind the
+   * preloader.
+   */
   useEffect(() => {
     let cancelled = false;
     let created: CanvasTexture | null = null;
+    let timer = 0;
 
     document.fonts.ready.then(() => {
       if (cancelled) return;
-      created = drawProjectScreen(project, index, maxAnisotropy);
-      setTexture(created);
+      timer = window.setTimeout(() => {
+        if (cancelled) return;
+        created = drawProjectScreen(project, index, maxAnisotropy, pixelScale);
+        setTexture(created);
+      }, index * 45);
     });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
       // The texture holds a GPU allocation and a canvas; both must go.
       created?.dispose();
     };
-  }, [project, index, maxAnisotropy]);
+  }, [project, index, maxAnisotropy, pixelScale]);
 
   /**
    * Going from no map to a map changes the material's shader defines, and three
