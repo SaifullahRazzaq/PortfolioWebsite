@@ -6,7 +6,8 @@ import { Kicker, OverlayPanel } from './OverlayPanel';
 import { MagneticButton } from '../ui/MagneticButton';
 import { projects } from '@/data/projects';
 import { sectionById } from '@/data/journey';
-import { activeScreenIndex } from '@/lib/gallery-layout';
+import { activeScreenIndex, progressForScreen } from '@/lib/gallery-layout';
+import { useLenis } from '@/components/providers/LenisProvider';
 import { journey } from '@/lib/journey-state';
 import type { Project } from '@/data/types';
 
@@ -21,11 +22,17 @@ import type { Project } from '@/data/types';
  * as legible as type, and on a phone there is no practical way to tap a screen
  * hanging on a wall — the HUD's button is the reliable way in.
  */
-export function GalleryOverlay({ onSelect }: { onSelect: (project: Project) => void }) {
+export function GalleryOverlay({
+  onSelect,
+  onBrowseAll,
+}: {
+  onSelect: (project: Project) => void;
+  onBrowseAll: () => void;
+}) {
   return (
     <>
       <GalleryIntro />
-      <GalleryHud onSelect={onSelect} />
+      <GalleryHud onSelect={onSelect} onBrowseAll={onBrowseAll} />
     </>
   );
 }
@@ -40,7 +47,7 @@ function GalleryIntro() {
      * one is already powering on as the camera turns into the corridor, so
      * there is no window where a centred card is unobstructive.
      */
-    <OverlayPanel section="gallery" place="top" edge={0.28} range={[0, 0.14]}>
+    <OverlayPanel section="gallery" place="top" edge={0.28} range={[0, 0.045]}>
       <div className="mx-auto max-w-lg pt-4">
         <Kicker>Projects</Kicker>
         <h2
@@ -67,10 +74,49 @@ function GalleryIntro() {
  * React state changes only when the *index* changes (nine times across the whole
  * room), never per frame.
  */
-function GalleryHud({ onSelect }: { onSelect: (project: Project) => void }) {
+function GalleryHud({
+  onSelect,
+  onBrowseAll,
+}: {
+  onSelect: (project: Project) => void;
+  onBrowseAll: () => void;
+}) {
   const root = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const project = projects[index];
+  const lenis = useLenis();
+
+  const goTo = (target: number) => {
+    const next = Math.min(projects.length - 1, Math.max(0, target));
+    lenis?.current?.scrollTo(progressForScreen(next) * ScrollTrigger.maxScroll(window), {
+      duration: 1.4,
+    });
+  };
+
+  // ← / → step between projects while the camera is in the Gallery. The handler
+  // reads the latest index from a ref so it is bound once, not per change.
+  const indexRef = useRef(0);
+  useEffect(() => {
+    indexRef.current = index;
+  }, [index]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (journey.section !== 'gallery') return;
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      if (document.querySelector('[role="dialog"]')) return;
+      e.preventDefault();
+      const next = Math.min(
+        projects.length - 1,
+        Math.max(0, indexRef.current + (e.key === 'ArrowRight' ? 1 : -1)),
+      );
+      lenis?.current?.scrollTo(progressForScreen(next) * ScrollTrigger.maxScroll(window), {
+        duration: 1.4,
+      });
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lenis]);
 
   useEffect(() => {
     const el = root.current;
@@ -183,15 +229,36 @@ function GalleryHud({ onSelect }: { onSelect: (project: Project) => void }) {
           </MagneticButton>
         </div>
 
-        <span className="mt-4 block h-px w-full bg-white/12">
-          <span
-            className="block h-px origin-left transition-transform duration-500 ease-out"
-            style={{
-              background: project.accent,
-              transform: `scaleX(${(index + 1) / projects.length})`,
-            }}
-          />
-        </span>
+        <div className="mt-4 flex items-center gap-1.5" role="group" aria-label="Jump to project">
+          {projects.map((p, i) => (
+            <button
+              key={p.slug}
+              type="button"
+              onClick={() => goTo(i)}
+              data-cursor="hover"
+              aria-label={`Go to ${p.title}`}
+              aria-current={i === index}
+              className="group flex h-6 flex-1 items-center"
+            >
+              <span
+                className="block h-1 w-full rounded-full transition-all duration-300 group-hover:h-1.5"
+                style={{ background: i === index ? project.accent : 'rgba(255,255,255,0.18)' }}
+              />
+            </button>
+          ))}
+        </div>
+        <div className="mt-1 flex items-center justify-between text-[0.625rem] text-bone-faint">
+          <span className="hidden sm:inline">← → to browse</span>
+          <button
+            type="button"
+            onClick={onBrowseAll}
+            data-cursor="hover"
+            className="underline-offset-4 transition-colors hover:text-bone hover:underline"
+          >
+            See all projects as a list
+          </button>
+        </div>
+
       </div>
     </div>
   );

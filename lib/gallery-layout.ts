@@ -7,6 +7,8 @@
  */
 
 import { projects } from '@/data/projects';
+import { sectionById } from '@/data/journey';
+import { cameraPositionAt } from './curve';
 
 /*
  * Corridor half-width.
@@ -45,6 +47,17 @@ const SPACING = 3.6;
  */
 export const SCREEN_TOE_IN = 0.885; // radians
 
+/**
+ * Screen width, and how far its toed-in edge reaches back toward the wall.
+ *
+ * The screen pivots about its centre, so one edge swings *into* the wall by
+ * (width / 2) · sin(toe-in) ≈ 1.36m. When the centre sat 12cm off the wall that
+ * whole edge was buried in it — a third of every screen's content was simply
+ * clipped away. The centre is now pulled in by that reach (plus the bezel).
+ */
+export const SCREEN_WIDTH = 3.5;
+const SCREEN_REACH = (SCREEN_WIDTH / 2) * Math.sin(SCREEN_TOE_IN) + 0.12;
+
 export interface ScreenPlacement {
   slug: string;
   index: number;
@@ -80,7 +93,7 @@ export const screenPlacements: ScreenPlacement[] = projects.map((project, i) => 
     index: i,
     side,
     z,
-    position: [side * (GALLERY_HALF_WIDTH - 0.12), 2.0, z] as [number, number, number],
+    position: [side * (GALLERY_HALF_WIDTH - SCREEN_REACH), 2.0, z] as [number, number, number],
     rotationY,
   };
 });
@@ -138,4 +151,23 @@ export function nearestScreen(cameraZ: number): { side: 1 | -1; pull: number } {
   // Full attention within 1.2m of the lead point, none beyond 3.6m.
   const pull = 1 - Math.min(1, Math.max(0, (bestDistance - 1.2) / 2.4));
   return { side: best.side, pull };
+}
+
+/**
+ * Scroll progress (0–1) that parks the camera where screen `index` is the one
+ * being addressed — the inverse of `activeScreenIndex`. Camera Z falls
+ * monotonically through the room, so a bisection finds it without needing the
+ * curve to be invertible in closed form.
+ */
+export function progressForScreen(index: number): number {
+  const targetZ = screenPlacements[index].z + LEAD;
+  const [start, end] = sectionById('gallery').scroll;
+  let lo = Math.max(0, start - 0.02);
+  let hi = end;
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    if (cameraPositionAt(mid).z > targetZ) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
 }

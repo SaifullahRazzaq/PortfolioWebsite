@@ -92,7 +92,7 @@ export function ContactOverlay() {
         >
           {/* formsubmit.co config: no captcha page, and a readable subject. */}
           <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_subject" value="New enquiry from saifullahrazzaq.dev" />
+          <input type="hidden" name="_subject" value="New enquiry from your portfolio" />
           <input type="hidden" name="_template" value="table" />
 
           <p className="label mb-6 text-[0.5625rem]">Send a message</p>

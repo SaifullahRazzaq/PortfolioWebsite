@@ -43,6 +43,7 @@ const Journey = dynamic(() => import('@/components/canvas/Journey').then((m) => 
 export function JourneyExperience() {
   const reducedMotion = useReducedMotion();
   const [skipped, setSkipped] = useState(false);
+  const [toProjects, setToProjects] = useState(false);
 
   // Reduced motion serves the plain layout by default, but never traps anyone
   // there — the visitor can still opt into the journey.
@@ -52,8 +53,10 @@ export function JourneyExperience() {
   if (showStatic) {
     return (
       <StaticFallback
+        scrollToProjects={toProjects}
         onEnterJourney={() => {
           setSkipped(false);
+          setToProjects(false);
           setOverrideJourney(true);
         }}
       />
@@ -62,12 +65,24 @@ export function JourneyExperience() {
 
   return (
     <LenisProvider>
-      <JourneyStage onSkip={() => setSkipped(true)} />
+      <JourneyStage
+        onSkip={() => setSkipped(true)}
+        onBrowseProjects={() => {
+          setToProjects(true);
+          setSkipped(true);
+        }}
+      />
     </LenisProvider>
   );
 }
 
-function JourneyStage({ onSkip }: { onSkip: () => void }) {
+function JourneyStage({
+  onSkip,
+  onBrowseProjects,
+}: {
+  onSkip: () => void;
+  onBrowseProjects: () => void;
+}) {
   const spacer = useRef<HTMLDivElement>(null);
   const quality = useQualityTier();
 
@@ -113,7 +128,7 @@ function JourneyStage({ onSkip }: { onSkip: () => void }) {
       <HeroOverlay />
       <AboutOverlay />
       <SkillsOverlay />
-      <GalleryOverlay onSelect={setSelected} />
+      <GalleryOverlay onSelect={setSelected} onBrowseAll={onBrowseProjects} />
       <StudyOverlay />
       <StairsOverlay />
       <ContactOverlay />

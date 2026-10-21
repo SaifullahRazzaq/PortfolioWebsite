@@ -39,7 +39,7 @@ export const projects: Project[] = [
     category: 'ai',
     tagline: 'Agentic CRM for property teams — scores leads, matches listings, runs the follow-up.',
     description:
-      'A CRM built for real-estate teams who lose deals to slow follow-up. Incoming enquiries are scored and routed automatically, matched against live inventory, and pushed into a follow-up sequence the agent drafts and the human approves. Agents get a single queue instead of a shared inbox, and every listing view, reply and site-visit booking is stitched onto the contact’s timeline. The live build below is a shared demo instance running entirely on mock data.',
+      'A CRM built for real-estate teams who lose deals to slow follow-up. Incoming enquiries are scored and routed automatically, matched against live inventory, and pushed into a follow-up sequence the agent drafts and the human approves. Agents get a single queue instead of a shared inbox, and every listing view, reply and site-visit booking is stitched onto the contact’s timeline. The demo build runs entirely on mock data.',
     highlights: [
       'Automatic lead scoring and routing on enquiry',
       'Listing matching against live inventory',
@@ -48,20 +48,12 @@ export const projects: Project[] = [
       'Full contact timeline: views, replies and site-visit bookings',
     ],
     stack: ['Next.js', 'TypeScript', 'LLM Agents', 'Node.js', 'PostgreSQL', 'Vercel'],
-    metrics: ['Live demo', 'Mock dataset'],
+    metrics: ['Demo on request', 'Mock dataset'],
     links: [
-      {
-        label: 'Open live demo',
-        url: 'https://real-estate-ai-1pikj1ror-saifullahrazzaq1995-2693s-projects.vercel.app/auth/login',
-        kind: 'live',
-      },
+      { label: 'Request a demo on WhatsApp', url: 'https://wa.me/923422359217', kind: 'whatsapp' },
     ],
     demo: {
-      note: 'Shared demo instance. Every record in it is generated mock data — no real client or property information.',
-      fields: [
-        { label: 'Email', value: 'admin@skyline.demo' },
-        { label: 'Password', value: 'Demo@1234' },
-      ],
+      note: 'The hosted demo is being redeployed. Message me on WhatsApp and I will walk you through it live — everything shown runs on generated mock data, no real client or property information.',
     },
     thumbnail: '/projects/real-estate-ai-crm.webp',
     alt: 'Real Estate AI CRM dashboard showing scored leads and matched listings',
@@ -211,7 +203,6 @@ export const projects: Project[] = [
     stack: ['React Native', 'Commerce', 'Payments'],
     metrics: ['50K+ downloads', 'Reliable checkout'],
     links: [
-      { label: 'App Store', url: 'https://apps.apple.com/us/app/tamkeen-stores', kind: 'appstore' },
       {
         label: 'Google Play',
         url: 'https://play.google.com/store/apps/details?id=com.tamkeen.tamkeenstores&hl=en',

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ProjectShot } from '../ui/ProjectShot';
 import { CopyField } from '../ui/CopyField';
 import { profile } from '@/data/profile';
 import { skills, specialisations } from '@/data/skills';
@@ -16,7 +17,17 @@ import { contact, socials } from '@/data/contact';
  * degraded one. Transitions are limited to colour and opacity; nothing moves
  * more than a few pixels, and nothing animates on scroll.
  */
-export function StaticFallback({ onEnterJourney }: { onEnterJourney?: () => void }) {
+export function StaticFallback({
+  onEnterJourney,
+  scrollToProjects = false,
+}: {
+  onEnterJourney?: () => void;
+  scrollToProjects?: boolean;
+}) {
+  useEffect(() => {
+    if (scrollToProjects) document.getElementById('projects')?.scrollIntoView();
+  }, [scrollToProjects]);
+
   return (
     <div className="min-h-dvh bg-[#08090C] text-bone">
       <div className="mx-auto max-w-4xl px-6 py-20 sm:px-8 md:py-28">
@@ -96,7 +107,7 @@ export function StaticFallback({ onEnterJourney }: { onEnterJourney?: () => void
 
         {/* ── Projects ───────────────────────────────────────────────────── */}
         <Section id="projects" title="Projects">
-          <div className="space-y-4">
+          <div className="grid gap-5 md:grid-cols-2">
             {projects.map((project) => (
               <StaticProject key={project.slug} slug={project.slug} />
             ))}
@@ -153,7 +164,7 @@ export function StaticFallback({ onEnterJourney }: { onEnterJourney?: () => void
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="mt-20 md:mt-28">
+    <section id={id} className="mt-20 scroll-mt-8 md:mt-28">
       <h2 className="label mb-7 flex items-center gap-3">
         <span className="inline-block h-px w-8 bg-amber" />
         {title}
@@ -170,6 +181,9 @@ function StaticProject({ slug }: { slug: string }) {
 
   return (
     <article className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-7">
+      <div className="mb-5">
+        <ProjectShot project={project} />
+      </div>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-display text-xl font-semibold" style={{ color: project.accent }}>

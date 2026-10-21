@@ -17,7 +17,9 @@ export const profile = {
   location: 'Karachi, Pakistan — working remotely',
   resumeUrl: '/Saifullah-Razzaq-CV.pdf',
   portraitUrl: '/assets/saifullah-razzaq.png',
-  siteUrl: 'https://saifullahrazzaq.dev',
+  // The live deployment. The custom domain does not resolve yet, and link previews
+  // (OG image, canonical, sitemap) are built from this, so it must be reachable.
+  siteUrl: 'https://porfoliowebiste.vercel.app',
 } as const;
 
 export type Profile = typeof profile;

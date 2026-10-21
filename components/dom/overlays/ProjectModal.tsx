@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { ProjectShot } from '../ui/ProjectShot';
 import { gsap } from '@/lib/gsap';
 import { CopyField } from '../ui/CopyField';
 import { MagneticButton } from '../ui/MagneticButton';
@@ -143,6 +144,10 @@ export function ProjectModal({
         <p data-modal-reveal className="mt-3 max-w-2xl text-base text-bone-dim sm:text-lg">
           {project.tagline}
         </p>
+
+        <div className="mt-7">
+          <ProjectShot key={project.slug} project={project} reveal />
+        </div>
 
         <p data-modal-reveal className="mt-6 max-w-2xl text-sm leading-relaxed text-bone-dim">
           {project.description}

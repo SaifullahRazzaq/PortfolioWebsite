@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { CanvasTexture, Mesh, MeshBasicMaterial } from 'three';
 import { clamp01, damp, smoothstep } from '@/lib/curve';
-import { drawProjectScreen } from '@/lib/screenTexture';
+import { drawProjectScreen, loadShot } from '@/lib/screenTexture';
+import { SCREEN_WIDTH } from '@/lib/gallery-layout';
 import { useQuality } from '../QualityContext';
 import type { Project } from '@/data/types';
 
@@ -25,7 +26,7 @@ interface ProjectScreenProps {
   onSelect: (project: Project) => void;
 }
 
-const WIDTH = 3.5;
+const WIDTH = SCREEN_WIDTH;
 const HEIGHT = 2.188; // 1024:640 aspect, sized for the 8.4m corridor
 
 export function ProjectScreen({
@@ -64,11 +65,11 @@ export function ProjectScreen({
     let created: CanvasTexture | null = null;
     let timer = 0;
 
-    document.fonts.ready.then(() => {
+    Promise.all([document.fonts.ready, loadShot(project.thumbnail)]).then(([, image]) => {
       if (cancelled) return;
       timer = window.setTimeout(() => {
         if (cancelled) return;
-        created = drawProjectScreen(project, index, maxAnisotropy, pixelScale);
+        created = drawProjectScreen(project, index, maxAnisotropy, pixelScale, image);
         setTexture(created);
       }, index * 45);
     });
@@ -108,33 +109,36 @@ export function ProjectScreen({
     // Roughly one and a half screen-spacings wide. Any wider and four screens
     // are lit at once in an 8m corridor, which stacks them into overlapping
     // slivers instead of presenting one at a time.
-    const target = (1 - smoothstep(5.5, 9.5, ahead)) * smoothstep(-2, 0.8, ahead);
+    // Never fully off: a screen that fades to nothing and back reads as flicker.
+    const target = 0.55 + 0.45 * (1 - smoothstep(5.5, 9.5, ahead)) * smoothstep(-2, 0.8, ahead);
     power.current = damp(power.current, target, 3.6, dt);
     hoverAmount.current = damp(hoverAmount.current, hovered ? 1 : 0, 10, dt);
 
     const lit = clamp01(power.current);
 
     if (material.current) {
-      material.current.opacity = lit;
       /*
-       * Driven past 1.0 on purpose. The panel is unlit geometry in a black
+       * Capped at 1.0 so bloom never washes the screenshot out. The panel is unlit geometry in a black
        * corridor, so its apparent brightness is entirely this multiplier — and
        * pushing above 1 is what lifts it over the bloom threshold so it reads as
        * emitting rather than as a picture hanging on a wall. Hover adds more
        * again, which is the whole hover affordance.
        */
-      material.current.color.setScalar(0.9 + lit * 0.55 + hoverAmount.current * 0.5);
+      material.current.color.setScalar(0.8 + lit * 0.2 + hoverAmount.current * 0.12);
     }
     if (mesh.current) {
       // A few millimetres of lean out of the wall on hover.
-      mesh.current.position.z = hoverAmount.current * 0.06;
+      mesh.current.position.z = 0.01 + hoverAmount.current * 0.06;
     }
   });
 
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
       {/* Bezel */}
-      <mesh position={[0, 0, -0.04]}>
+      {/* Front face sits 3cm behind the screen. It used to be exactly coplanar
+          with it, and the depth buffer then flipped between the two every frame
+          — vertical streaks and a constant flicker on real GPUs. */}
+      <mesh position={[0, 0, -0.07]}>
         <boxGeometry args={[WIDTH + 0.14, HEIGHT + 0.14, 0.08]} />
         <meshStandardMaterial color="#0A0B0F" roughness={0.5} metalness={0.6} />
       </mesh>
@@ -160,11 +164,12 @@ export function ProjectScreen({
         <meshBasicMaterial
           ref={material}
           map={texture}
-          transparent
-          opacity={0}
           // Screens are light sources, not lit surfaces — never tone-map them
           // down or they stop reading as emissive in a dark room.
           toneMapped={false}
+          polygonOffset
+          polygonOffsetFactor={-1}
+          polygonOffsetUnits={-1}
         />
       </mesh>
 
