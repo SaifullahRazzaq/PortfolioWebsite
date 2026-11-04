@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { profile } from '@/data/profile';
 import { SCROLL_HEIGHT_VH } from '@/data/journey';
+import { Analytics } from '@/components/Analytics';
 import './globals.css';
 
 /**
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <style>{journeyScrollCss}</style>
       </head>
       <body>{children}</body>
+      <Analytics />
     </html>
   );
 }

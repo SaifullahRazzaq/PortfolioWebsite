@@ -18,6 +18,7 @@ import { ProjectModal } from '@/components/dom/overlays/ProjectModal';
 import { StaticFallback } from '@/components/dom/static/StaticFallback';
 import { SemanticContent } from '@/components/dom/static/SemanticContent';
 import { useJourneyScroll } from '@/hooks/useScrollProgress';
+import { track } from '@/lib/analytics';
 import { useQualityTier } from '@/hooks/useQualityTier';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import type { Project } from '@/data/types';
@@ -113,6 +114,12 @@ function JourneyStage({
 
   const closeModal = useCallback(() => setSelected(null), []);
 
+  // Projects open from both the 3D gallery and the overlay; report either way.
+  const openProject = useCallback((project: Project) => {
+    track('project_view', { project: project.slug, project_title: project.title });
+    setSelected(project);
+  }, []);
+
   return (
     <>
       {/*
@@ -122,13 +129,13 @@ function JourneyStage({
       */}
       <SemanticContent />
 
-      <Journey quality={quality} onSelectProject={setSelected} />
+      <Journey quality={quality} onSelectProject={openProject} />
 
       {/* ── DOM overlay layer ────────────────────────────────────────────── */}
       <HeroOverlay />
       <AboutOverlay />
       <SkillsOverlay />
-      <GalleryOverlay onSelect={setSelected} onBrowseAll={onBrowseProjects} />
+      <GalleryOverlay onSelect={openProject} onBrowseAll={onBrowseProjects} />
       <StudyOverlay />
       <StairsOverlay />
       <ContactOverlay />

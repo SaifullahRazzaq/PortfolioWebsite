@@ -6,6 +6,7 @@ import { MagneticButton } from '../ui/MagneticButton';
 import { contact, socials } from '@/data/contact';
 import { profile } from '@/data/profile';
 import { useLenis } from '@/components/providers/LenisProvider';
+import { track } from '@/lib/analytics';
 
 /**
  * 8. THE ROOFTOP — Contact. The end of the journey.
@@ -87,7 +88,11 @@ export function ContactOverlay() {
           data-reveal
           action={contact.formEndpoint}
           method="POST"
-          onSubmit={() => setSending(true)}
+          onSubmit={() => {
+            // GA4's recommended event for an enquiry; mark it as a key event in GA.
+            track('generate_lead', { method: 'contact_form' });
+            setSending(true);
+          }}
           className="rounded-2xl border border-white/10 bg-black/40 p-6 backdrop-blur-xl sm:p-8"
         >
           {/* formsubmit.co config: no captcha page, and a readable subject. */}
