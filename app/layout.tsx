@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import localFont from 'next/font/local';
 import { profile } from '@/data/profile';
 import { SCROLL_HEIGHT_VH } from '@/data/journey';
 import { Analytics } from '@/components/Analytics';
@@ -16,16 +16,23 @@ const journeyScrollCss = `
   :root { --journey-scroll: ${SCROLL_HEIGHT_VH.mobile}svh; }
 }`;
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
+/*
+ * Self-hosted variable fonts (latin subset, from Fontsource, SIL OFL), not
+ * next/font/google: fetching from Google at build time failed under Turbopack
+ * on Netlify ("next/font/google queries have exactly one entry"), and local
+ * files keep the build free of network calls. One variable file per family
+ * covers every weight the site uses.
+ */
+const spaceGrotesk = localFont({
+  src: './fonts/space-grotesk-latin-variable.woff2',
+  weight: '300 700',
   variable: '--font-space-grotesk',
   display: 'swap',
 });
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+const inter = localFont({
+  src: './fonts/inter-latin-variable.woff2',
+  weight: '100 900',
   variable: '--font-inter',
   display: 'swap',
 });
