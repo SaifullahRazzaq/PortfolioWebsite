@@ -17,9 +17,11 @@ export const profile = {
   location: 'Karachi, Pakistan — working remotely',
   resumeUrl: '/Saifullah-Razzaq-CV.pdf',
   portraitUrl: '/assets/saifullah-razzaq.png',
-  // The live deployment. The custom domain does not resolve yet, and link previews
-  // (OG image, canonical, sitemap) are built from this, so it must be reachable.
-  siteUrl: 'https://porfoliowebiste.vercel.app',
+  // The live deployment. Link previews (OG image, canonical, sitemap) are built
+  // from this, so it must be reachable. Netlify sets `URL` to the site's primary
+  // address during every build; `NEXT_PUBLIC_SITE_URL` overrides it (e.g. once a
+  // custom domain resolves). Only read on the server (layout, sitemap, robots).
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || process.env.URL || 'http://localhost:3000',
 } as const;
 
 export type Profile = typeof profile;
