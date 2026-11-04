@@ -1,12 +1,15 @@
 import { ImageResponse } from 'next/og';
 import { profile } from '@/data/profile';
 
+// Generated once at build time: the site is a static export (next.config.ts).
+export const dynamic = 'force-static';
+
 export const alt = `${profile.name} — ${profile.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 /**
- * Generated share card. Built at request time from /data, so it can never drift
+ * Generated share card. Built at build time from /data, so it can never drift
  * out of sync with the name or role shown on the site.
  *
  * System fonts only: loading a webfont here would add a network fetch to every
